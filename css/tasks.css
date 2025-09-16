@@ -1,0 +1,67 @@
+/* tasks.css - styles for tasks section */
+.tasks-section {
+    flex: 1;
+    min-width: 300px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.task-form {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.task-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    font-size: 1rem;
+}
+
+.add-task-btn {
+    padding: 12px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+.task-list {
+    list-style: none;
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    animation: fadeIn 0.5s;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-checkbox {
+    margin-right: 10px;
+}
+
+.task-text {
+    flex: 1;
+}
+
+.task-completed .task-text {
+    text-decoration: line-through;
+    color: var(--text-light);
+}
+
+.task-delete {
+    color: var(--accent);
+    cursor: pointer;
+    padding: 5px;
+}

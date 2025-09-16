@@ -1,6 +1,7 @@
 import createTimer from './timer.js';
 import { createTasks } from './tasks.js';
 import createNotes from './notes.js';
+import { createSpotifyEmbed } from './spotify.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Elements
@@ -286,6 +287,17 @@ document.addEventListener('DOMContentLoaded', () => {
     workModeBtn.addEventListener('click', setWorkMode);
     shortBreakModeBtn.addEventListener('click', setShortBreakMode);
     longBreakModeBtn.addEventListener('click', setLongBreakMode);
+
+    // Spotify embed handling: update on change and while typing (debounced)
+    const spotifyInput = document.getElementById('spotify-url');
+    if (spotifyInput) {
+        spotifyInput.addEventListener('change', () => createSpotifyEmbed());
+        let debounceTimer = null;
+        spotifyInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => createSpotifyEmbed(), 600);
+        });
+    }
 
     // initialize UI
     renderTasks();

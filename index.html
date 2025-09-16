@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FocusPomodoro - Productivity App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/timer.css">
+    <link rel="stylesheet" href="css/tasks.css">
+    <link rel="stylesheet" href="css/notes.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/animations.css">
     <!-- EasyMDE (Markdown editor) -->
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>Focus<span style="color: #e74c3c;">Pomodoro</span></h1>
             <p class="tagline">Boost your productivity with the Pomodoro Technique</p>
         </header>
-        
+
         <div class="app-container">
             <section class="timer-section">
                 <div class="timer-mode">
@@ -23,33 +32,33 @@
                     <button class="mode-btn" id="short-break-mode">Short Break</button>
                     <button class="mode-btn" id="long-break-mode">Long Break</button>
                 </div>
-                
+
                 <div class="timer-display" id="timer">25:00</div>
-                
+
                 <div class="timer-controls">
                     <button class="btn btn-primary" id="start-btn">Start</button>
                     <button class="btn btn-secondary" id="pause-btn">Pause</button>
                     <button class="btn btn-secondary" id="reset-btn">Reset</button>
                 </div>
-                
+
                 <div class="pomodoro-count">
                     <p>Pomodoros completed: <span id="count">0</span></p>
                 </div>
             </section>
-            
+
             <section class="tasks-section">
                 <h2 class="section-title"><i class="fas fa-tasks"></i> To-Do List</h2>
-                
+
                 <div class="task-form">
                     <input type="text" class="task-input" id="task-input" placeholder="Add a new task...">
                     <button class="add-task-btn" id="add-task-btn"><i class="fas fa-plus"></i></button>
                 </div>
-                
+
                 <ul class="task-list" id="task-list">
                     <!-- Tasks will be added here dynamically -->
                 </ul>
             </section>
-            
+
             <section class="notes-section">
                 <h2 class="section-title"><i class="fas fa-sticky-note"></i> Notes</h2>
                 <div class="notes-layout">
@@ -81,7 +90,13 @@
                 </div>
             </div>
         </div>
-        
+        <div id="spotify-area">
+            <label>
+                Enter spotify playlist URL
+                <input type="text" id="spotify-url">
+            </label>
+        </div>
+
         <div class="stats">
             <div class="stat-item">
                 <div class="stat-value" id="tasks-completed">0</div>
@@ -96,10 +111,12 @@
                 <div class="stat-label">Pomodoros</div>
             </div>
         </div>
+
     </div>
 
     <script type="module" src="js/app.js"></script>
     <!-- EasyMDE script (loaded after app module so app can detect it) -->
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 </body>
+
 </html>

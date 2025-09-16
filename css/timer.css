@@ -1,0 +1,49 @@
+/* timer.css - styles for the timer section */
+.timer-section {
+    flex: 1;
+    min-width: 300px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(236, 240, 241, 0.5);
+    border-right: 1px solid #ddd;
+}
+
+.timer-display {
+    font-size: 5rem;
+    font-weight: bold;
+    margin: 20px 0;
+    color: var(--primary);
+    font-family: 'Courier New', monospace;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.timer-mode {
+    display: flex;
+    background: white;
+    border-radius: 50px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.mode-btn {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: bold;
+}
+
+.mode-btn.active {
+    background: var(--accent);
+    color: white;
+}
