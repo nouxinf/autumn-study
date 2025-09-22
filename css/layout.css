@@ -63,3 +63,24 @@ h1 {
         font-size: 3.5rem;
     }
 }
+
+/* Small-phone specific adjustments */
+@media (max-width: 480px) {
+    .container {
+        margin: 10px 0;
+        border-radius: 10px;
+        padding: 0;
+    }
+
+    header {
+        padding: 14px;
+    }
+
+    h1 { font-size: 1.6rem; }
+    .tagline { font-size: 0.85rem; }
+
+    .app-container { gap: 8px; }
+
+    .timer-display { font-size: 3rem; }
+    .stats { padding: 10px; }
+}

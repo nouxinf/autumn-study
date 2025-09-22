@@ -4,6 +4,8 @@ export default function createNotes() {
     let notes = [];
     let activeId = null;
     let changeCb = () => {};
+    // Optional external sync hook: set this to a function(remoteData) to apply remote state
+    let applyRemote = null;
 
     function load() {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -16,6 +18,8 @@ export default function createNotes() {
     function save() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
         notify();
+        // if remote hook provided, call it
+        if (typeof applyRemote === 'function') applyRemote({notes});
     }
 
     function createNote() {
@@ -58,11 +62,13 @@ export default function createNotes() {
 
     function onChange(cb) { changeCb = cb; }
 
+    function setApplyRemote(fn) { applyRemote = fn; }
+
     function notify() {
         changeCb({notes: getNotes(), active: getActiveNote()});
     }
 
     load();
 
-    return {load, save, createNote, updateNote, deleteNote, getNotes, getActiveNote, setActive, onChange};
+    return {load, save, createNote, updateNote, deleteNote, getNotes, getActiveNote, setActive, onChange, setApplyRemote};
 }

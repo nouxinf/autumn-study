@@ -2,6 +2,7 @@
 export function createTasks() {
     let tasks = [];
     let tasksCompleted = 0;
+    let applyRemote = null;
 
     function load() {
         const saved = localStorage.getItem('pomodoroTasks');
@@ -13,6 +14,7 @@ export function createTasks() {
     function save() {
         localStorage.setItem('pomodoroTasks', JSON.stringify(tasks));
         localStorage.setItem('pomodoroTasksCompleted', tasksCompleted);
+        if (typeof applyRemote === 'function') applyRemote({tasks, tasksCompleted});
     }
 
     function addTask(text) {
@@ -45,7 +47,9 @@ export function createTasks() {
         return localStorage.getItem('pomodoroNotes') || '';
     }
 
+    function setApplyRemote(fn) { applyRemote = fn; }
+
     load();
 
-    return {addTask, toggleTask, deleteTask, getTasks, getTasksCompleted, saveNotes, loadNotes};
+    return {addTask, toggleTask, deleteTask, getTasks, getTasksCompleted, saveNotes, loadNotes, setApplyRemote, load};
 }

@@ -6,6 +6,7 @@ export default function createTimer({onTick, onComplete}) {
     let mode = 'work';
     let count = 0;
     let totalFocusTime = 0;
+    let remoteHook = null;
 
     function setSecondsForMode(m) {
         if (m === 'work') return 1500;
@@ -33,6 +34,7 @@ export default function createTimer({onTick, onComplete}) {
                     if (mode === 'work') {
                         count++;
                         totalFocusTime += 25;
+                        if (typeof remoteHook === 'function') remoteHook({count, totalFocusTime, mode});
                     }
 
                     if (onComplete) onComplete({mode, count});
@@ -63,5 +65,7 @@ export default function createTimer({onTick, onComplete}) {
         return {seconds, mode, isRunning, count, totalFocusTime};
     }
 
-    return {start, pause, reset, setMode, getState, onTick, onComplete};
+    function setRemoteHook(fn) { remoteHook = fn; }
+
+    return {start, pause, reset, setMode, getState, onTick, onComplete, setRemoteHook};
 }

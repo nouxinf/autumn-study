@@ -79,3 +79,26 @@
     flex: 1;
     min-height: 240px;
 }
+
+/* Mobile: stack sidebar above editor and make sidebar full-width */
+@media (max-width: 480px) {
+    .notes-layout {
+        flex-direction: column;
+    }
+
+    .notes-sidebar {
+        width: 100%;
+        order: 0;
+        max-height: 220px;
+    }
+
+    .notes-editor {
+        order: 1;
+    }
+
+    .note-title { padding: 8px 10px; font-size: 0.95rem; }
+
+    .notes-area { padding: 10px; min-height: 160px; }
+
+    .notes-list li { padding: 8px; }
+}

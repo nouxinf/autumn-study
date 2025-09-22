@@ -19,26 +19,57 @@ export function createSpotifyEmbed() {
     const url = input.value.trim();
     const embedUrl = toSpotifyEmbed(url);
 
+    // Try to find existing wrapper or iframe
+    const wrapper = document.getElementById('spotify-embed-wrapper');
     const existingEmbed = document.getElementById('spotify-embed');
-    // If embedUrl is null/invalid, remove existing iframe and return
+
+    // If embedUrl is null/invalid, remove existing elements and return
     if (!embedUrl) {
-        if (existingEmbed) existingEmbed.remove();
+        if (wrapper) wrapper.remove();
+        else if (existingEmbed) existingEmbed.remove();
         return;
     }
 
-    if (existingEmbed) {
-        // update src to new playlist (keeps input element intact)
-        existingEmbed.src = embedUrl;
-    } else {
-        const iframe = document.createElement('iframe');
-        iframe.id = 'spotify-embed';
-        iframe.style.borderRadius = '12px';
-        iframe.width = '100%';
-        iframe.height = '352';
-        iframe.frameBorder = '0';
-        iframe.allowFullscreen = true;
-        iframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
-        iframe.src = embedUrl;
-        area.appendChild(iframe);
+    // If a wrapper exists, update its iframe
+    if (wrapper) {
+        const iframe = wrapper.querySelector('#spotify-embed');
+        if (iframe) iframe.src = embedUrl;
+        else {
+            // create iframe inside wrapper
+            const iframeNew = document.createElement('iframe');
+            iframeNew.id = 'spotify-embed';
+            iframeNew.setAttribute('loading', 'lazy');
+            iframeNew.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+            iframeNew.src = embedUrl;
+            wrapper.appendChild(iframeNew);
+        }
+        return;
     }
+
+    // No wrapper exists. If an iframe exists directly, update it but remove fixed sizing so CSS controls it
+    if (existingEmbed) {
+        existingEmbed.src = embedUrl;
+        existingEmbed.removeAttribute('width');
+        existingEmbed.removeAttribute('height');
+        existingEmbed.style.borderRadius = '';
+        existingEmbed.setAttribute('loading', 'lazy');
+
+        // Wrap existing iframe in a responsive wrapper so CSS aspect-ratio works
+        const wrap = document.createElement('div');
+        wrap.id = 'spotify-embed-wrapper';
+        existingEmbed.parentNode.insertBefore(wrap, existingEmbed);
+        wrap.appendChild(existingEmbed);
+        return;
+    }
+
+    // Create wrapper + iframe (preferred)
+    const wrap = document.createElement('div');
+    wrap.id = 'spotify-embed-wrapper';
+    const iframe = document.createElement('iframe');
+    iframe.id = 'spotify-embed';
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+    iframe.src = embedUrl;
+    wrap.appendChild(iframe);
+    area.appendChild(wrap);
 }

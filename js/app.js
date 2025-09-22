@@ -3,7 +3,10 @@ import { createTasks } from './tasks.js';
 import createNotes from './notes.js';
 import { createSpotifyEmbed } from './spotify.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+// optional firebase imports will be loaded at runtime if config exists
+import { initFirebase, listenToUser, setUserData, onAuthStateChanged, signInWithEmail, createUserWithEmail, signOut } from './firebase.js';
+
+document.addEventListener('DOMContentLoaded', async () => {
     // Elements
     const timerDisplay = document.getElementById('timer');
     const startBtn = document.getElementById('start-btn');
@@ -25,6 +28,77 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tasks = createTasks();
     const notes = createNotes();
+
+    // Try to load firebase config (user should copy firebase-config.example.js -> firebase-config.js)
+    let firebaseConfig = null;
+    try {
+        // dynamic import attempt
+        // eslint-disable-next-line no-eval
+        const cfg = await import('./firebase-config.js');
+        firebaseConfig = cfg.default || cfg;
+    } catch (err) {
+        // no config present — that's fine; app will work with localStorage only
+    }
+
+    let currentUserId = null;
+    let unsubscribeUser = null;
+    if (firebaseConfig) {
+        initFirebase(firebaseConfig).then(({ auth, firestore } = {}) => {
+            // If onAuthStateChanged is available, use it to track the signed-in user
+            if (typeof onAuthStateChanged === 'function') {
+                onAuthStateChanged(user => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        document.getElementById('auth-status').textContent = `Signed in: ${user.email || user.uid}`;
+                        document.getElementById('auth-logout').style.display = '';
+                        // detach previous listener
+                        if (unsubscribeUser) { unsubscribeUser(); unsubscribeUser = null; }
+                        // start listening to this user's doc
+                        unsubscribeUser = listenToUser(currentUserId, remote => {
+                            if (!remote) return;
+                            if (remote.notes && typeof notes.setApplyRemote === 'function') {
+                                localStorage.setItem('pomodoroNotesList', JSON.stringify(remote.notes));
+                                notes.load();
+                            }
+                            if (remote.tasks && typeof tasks.setApplyRemote === 'function') {
+                                localStorage.setItem('pomodoroTasks', JSON.stringify(remote.tasks));
+                                localStorage.setItem('pomodoroTasksCompleted', remote.tasksCompleted || 0);
+                                tasks.load();
+                            }
+                            if (remote.timer) {
+                                localStorage.setItem('pomodoroTimerState', JSON.stringify(remote.timer));
+                            }
+                        });
+                    } else {
+                        // signed out
+                        currentUserId = null;
+                        document.getElementById('auth-status').textContent = 'Not signed in';
+                        document.getElementById('auth-logout').style.display = 'none';
+                        if (unsubscribeUser) { unsubscribeUser(); unsubscribeUser = null; }
+                    }
+                });
+            } else {
+                // fallback: try to use auth.currentUser or listen to anon doc
+                const user = (auth && auth.currentUser) || null;
+                currentUserId = user ? user.uid : 'anon';
+                unsubscribeUser = listenToUser(currentUserId, remote => {
+                    if (!remote) return;
+                    if (remote.notes && typeof notes.setApplyRemote === 'function') {
+                        localStorage.setItem('pomodoroNotesList', JSON.stringify(remote.notes));
+                        notes.load();
+                    }
+                    if (remote.tasks && typeof tasks.setApplyRemote === 'function') {
+                        localStorage.setItem('pomodoroTasks', JSON.stringify(remote.tasks));
+                        localStorage.setItem('pomodoroTasksCompleted', remote.tasksCompleted || 0);
+                        tasks.load();
+                    }
+                    if (remote.timer) {
+                        localStorage.setItem('pomodoroTimerState', JSON.stringify(remote.timer));
+                    }
+                });
+            }
+        }).catch(err => console.warn('firebase init failed', err));
+    }
 
     // Notes UI elements
     const notesListEl = document.getElementById('notes-list');
@@ -299,9 +373,81 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Preset playlist buttons (avoid inline onclicks)
+    const presetBtn = document.getElementById('preset-autumn-lofi');
+    if (presetBtn && spotifyInput) {
+        presetBtn.addEventListener('click', () => {
+            const url = presetBtn.getAttribute('data-playlist');
+            spotifyInput.value = url;
+            // call embed creator
+            createSpotifyEmbed();
+        });
+    }
+
+    // Auth UI handlers (login/signup/logout)
+    const loginBtn = document.getElementById('auth-login');
+    const signupBtn = document.getElementById('auth-signup');
+    const logoutBtn = document.getElementById('auth-logout');
+
+    if (loginBtn) {
+        loginBtn.addEventListener('click', async () => {
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            try {
+                await signInWithEmail(email, password);
+            } catch (err) {
+                document.getElementById('auth-status').textContent = 'Login error: ' + (err.message || err);
+            }
+        });
+    }
+
+    if (signupBtn) {
+        signupBtn.addEventListener('click', async () => {
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            try {
+                await createUserWithEmail(email, password);
+            } catch (err) {
+                document.getElementById('auth-status').textContent = 'Signup error: ' + (err.message || err);
+            }
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut();
+            } catch (err) {
+                document.getElementById('auth-status').textContent = 'Logout error: ' + (err.message || err);
+            }
+        });
+    }
+
     // initialize UI
     renderTasks();
     // initial tick to show display
     const state = timer.getState();
     timerDisplay.textContent = '25:00';
+    // When significant local data changes, write back to Firestore if available
+    function pushLocalStateToFirestore() {
+        if (!firebaseConfig || !currentUserId) return;
+        const payload = {
+            notes: notes.getNotes(),
+            tasks: tasks.getTasks(),
+            tasksCompleted: tasks.getTasksCompleted(),
+            timer: timer.getState()
+        };
+        setUserData(currentUserId, payload).catch(err => console.warn('failed to push user data', err));
+    }
+
+    // wire local save hooks to push to Firestore
+    if (typeof notes.setApplyRemote === 'function') {
+        notes.setApplyRemote(() => pushLocalStateToFirestore());
+    }
+    if (typeof tasks.setApplyRemote === 'function') {
+        tasks.setApplyRemote(() => pushLocalStateToFirestore());
+    }
+    if (typeof timer.setRemoteHook === 'function') {
+        timer.setRemoteHook(() => pushLocalStateToFirestore());
+    }
 });

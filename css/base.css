@@ -12,8 +12,6 @@
 }
 
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -26,4 +24,19 @@ body {
     align-items: center;
     padding: 20px;
     color: var(--text);
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+    :root {
+        --shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+        padding: 12px;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* reduce base font size slightly on small screens */
+    * { font-size: 15px; }
 }
