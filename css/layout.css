@@ -2,7 +2,7 @@
 .container {
     width: 100%;
     max-width: 1000px;
-    background: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(180deg, var(--paper), var(--cream));
     border-radius: 15px;
     box-shadow: var(--shadow);
     overflow: hidden;
@@ -10,8 +10,8 @@
 }
 
 header {
-    background: var(--primary);
-    color: white;
+    background: linear-gradient(90deg, rgba(90,55,20,0.95), rgba(138,75,23,0.95));
+    color: var(--paper);
     padding: 20px;
     text-align: center;
 }
@@ -23,7 +23,7 @@ h1 {
 
 .tagline {
     font-style: italic;
-    color: var(--light);
+    color: var(--paper);
 }
 
 .app-container {
@@ -36,8 +36,8 @@ h1 {
     display: flex;
     justify-content: space-around;
     padding: 15px;
-    background: var(--primary);
-    color: white;
+    background: linear-gradient(90deg, rgba(138,75,23,0.9), rgba(90,55,20,0.9));
+    color: var(--paper);
 }
 
 .stat-item {

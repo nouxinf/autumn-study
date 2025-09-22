@@ -10,7 +10,7 @@
 
 .btn-primary {
     background: var(--accent);
-    color: white;
+    color: var(--paper);
 }
 
 .btn-primary:hover {
@@ -19,7 +19,7 @@
 
 .btn-secondary {
     background: var(--secondary);
-    color: white;
+    color: var(--paper);
 }
 
 .btn-secondary:hover {

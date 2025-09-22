@@ -15,7 +15,7 @@
 .task-input {
     flex: 1;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(60,40,30,0.06);
     border-radius: 5px 0 0 5px;
     font-size: 1rem;
 }
@@ -23,7 +23,7 @@
 .add-task-btn {
     padding: 12px 20px;
     background: var(--accent);
-    color: white;
+    color: var(--paper);
     border: none;
     border-radius: 0 5px 5px 0;
     cursor: pointer;
@@ -48,7 +48,7 @@
     display: flex;
     align-items: center;
     padding: 12px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(60,40,30,0.04);
     animation: fadeIn 0.5s;
 }
 

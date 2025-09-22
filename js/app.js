@@ -114,8 +114,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const timer = createTimer({
         onTick(seconds, state) {
             timerDisplay.textContent = formatTime(seconds);
-            if (seconds < 60) timerDisplay.style.color = '#e74c3c';
-            else timerDisplay.style.color = '#2c3e50';
+            if (seconds < 60) timerDisplay.style.color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#d35400';
+            else timerDisplay.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#3b2f2a';
         },
         onComplete({mode, count}) {
             // play sound

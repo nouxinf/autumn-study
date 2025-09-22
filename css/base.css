@@ -1,12 +1,15 @@
 /* base.css - variables and global resets */
 :root {
-    --primary: #2c3e50;
-    --secondary: #34495e;
-    --accent: #e74c3c;
-    --accent-light: #ff6b6b;
-    --light: #ecf0f1;
-    --text: #2c3e50;
-    --text-light: #7f8c8d;
+    /* Autumn themed palette */
+    --primary: #5a3714; /* deep brown */
+    --secondary: #8a4b17; /* warm sienna */
+    --accent: #d35400; /* pumpkin orange */
+    --accent-light: #ff8a33; /* lighter pumpkin */
+    --leaf: #7b9a40; /* olive leaf green */
+    --cream: #fff7ef; /* soft cream background */
+    --paper: #fffdf8; /* paper white */
+    --text: #3b2f2a; /* dark cocoa */
+    --text-light: #c3b9b4; /* muted brown */
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
 }
@@ -17,13 +20,15 @@
 }
 
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: url(../assets/bg.jpg);
+    background-size: cover;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     color: var(--text);
+    background-attachment: fixed;
 }
 
 /* Mobile tweaks */
@@ -39,4 +44,23 @@ body {
 
     /* reduce base font size slightly on small screens */
     * { font-size: 15px; }
+
+    /* Auth area: wrap and stack controls to avoid horizontal overflow */
+    #auth-area {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        padding: 6px 0;
+    }
+
+    #auth-area input[type="email"],
+    #auth-area input[type="password"] {
+        flex: 1 1 100%;
+        max-width: 320px;
+    }
+
+    #auth-area .btn {
+        flex: 1 1 45%;
+        min-width: 120px;
+    }
 }
